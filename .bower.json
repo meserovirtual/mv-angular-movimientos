@@ -1,14 +1,14 @@
 {
-  "name": "ac-angular-movimientos",
-  "homepage": "https://github.com/arielcessario/ac-angular-movimientos",
+  "name": "mv-angular-movimientos",
+  "homepage": "https://github.com/meserovirtual/mv-angular-movimientos",
   "_release": "b87740cd78",
   "_resolution": {
     "type": "branch",
     "branch": "master",
     "commit": "b87740cd78814457295998af660433493272f9ae"
   },
-  "_source": "https://github.com/arielcessario/ac-angular-movimientos.git",
+  "_source": "https://github.com/meserovirtual/mv-angular-movimientos.git",
   "_target": "*",
-  "_originalSource": "ac-angular-movimientos",
+  "_originalSource": "mv-angular-movimientos",
   "_direct": true
 }
