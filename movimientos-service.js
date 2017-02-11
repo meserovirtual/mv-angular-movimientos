@@ -8,7 +8,7 @@
 (function () {
 
     'use strict';
-    var app = angular.module('acMovimientos', ['acMovimientosList']);
+    var app = angular.module('mvMovimientos', ['mvMovimientosList']);
     var scripts = document.getElementsByTagName("script");
     var currentScriptPath = scripts[scripts.length - 1].src;
     if (currentScriptPath.length == 0) {

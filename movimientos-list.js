@@ -1,5 +1,5 @@
 (function () {
-    angular.module('acMovimientosList', [])
+    angular.module('mvMovimientosList', [])
         .service('MovimientosList', MovimientosList);
 
     //1 Código de Usuario
