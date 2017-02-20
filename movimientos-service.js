@@ -20,8 +20,8 @@
     }]);
 
     app.factory('MovimientosService',
-        ['$http', 'MovimientosList', 'MovimientoStockFinal',
-            function ($http, MovimientosList, MovimientoStockFinal) {
+        ['$http', 'MovimientosList', 'MovimientoStockFinal', 'ErrorHandler', '$q',
+            function ($http, MovimientosList, MovimientoStockFinal, ErrorHandler, $q) {
                 var vm = this;
 
                 var url = currentScriptPath.replace('movimientos-service.js', '/includes/ac-movimientos.php');
@@ -35,9 +35,7 @@
                 service.getMaxAsiento = getMaxAsiento;
                 service.deleteAsiento = deleteAsiento;
 
-                function armarMovimiento(tipo_asiento, subtipo_asiento, sucursal_id, pos_id, forma_pago, transferencia_desde, total, descuento, detalle, items, cliente_id, usuario_id, comentario, callback) {
-
-
+                function armarMovimiento(tipo_asiento, subtipo_asiento, sucursal_id, pos_id, forma_pago, transferencia_desde, total, descuento, detalle, items, cliente_id, usuario_id, comentario) {
 
                     //Tipos:
                     //001 - Venta de productos
@@ -59,8 +57,6 @@
 
                     // Esta variable hace que se convierta el valor en negativo en la caja, significa que sale un valor
                     var pagando = 1;
-
-
                     var asiento = [];
                     switch (tipo_asiento) {
                         case '001':
@@ -82,14 +78,10 @@
                                         asiento.push(MovimientosList.ventaServicio(sucursal_id, pos_id, items[i].importe, items[i].descripcion, cliente_id, usuario_id));
                                     } else {
                                         asiento.push(MovimientosList.ventaMercaderias(sucursal_id, pos_id, items[i].producto_id, items[i].precio_unidad, items[i].cantidad, items[i].precio_total, 'Venta de producto', usuario_id));
-
                                     }
-
                                 }
 
-
                                 //Obtiene los costos para los productos que conforman el kit o solo para el producto
-
                                 if (items[i].productos_kit.length > 0) {
                                     for (var x = 0; x < items[i].productos_kit.length; x++) {
                                         items[i].productos_kit[x].stock = items[i].productos_kit[x].stocks;
@@ -101,13 +93,9 @@
                                     if (items[i].producto_tipo != 3) {
                                         getCosto(items[i], asiento, sucursal_id, pos_id, usuario_id);
                                     }
-
                                 }
-
-
                             }
                             //pagando = -1;
-
                             break;
                         case '002':
                             var list_items = items.pedidos_detalles;
@@ -135,7 +123,6 @@
                                 asiento.push(MovimientosList.ventaServicio(sucursal_id, pos_id, items[i].importe, items[i].descripcion, cliente_id, usuario_id));
                             }
                             //sucursal_id, pos_id, importe, comentario, cliente_id, usuario_id
-
                             break;
                         case '005':
                             asiento.push(MovimientosList.tarjetasAPagar(sucursal_id, pos_id, total, comentario, usuario_id));
@@ -152,7 +139,6 @@
                                 asiento.push(MovimientosList.aguinaldos(sucursal_id, pos_id, total, comentario, usuario_id));
                                 detalle = 'Pago de aguinaldos';
                             }
-
                             pagando = -1;
                             break;
                         case '008':
@@ -245,7 +231,13 @@
                     }
 
 
-                    save(callback, asiento);
+                    //save(callback, asiento);
+                    return save(asiento).then(function(data){
+                        console.log(data);
+                        return data;
+                    }).catch(function(data){
+                        ErrorHandler(data);
+                    });
 
                     //console.log(asiento);
                     //console.log(MovimientoStockFinal.stocks_finales);
@@ -266,7 +258,6 @@
                     //10 - Mercado Libre Transferencia
                     //11 - Caja General Local
                     //12 - Proveedores
-
 
                     switch (forma_pago) {
                         case '01':
@@ -377,7 +368,6 @@
                                 asiento.push(MovimientosList.proveedores(sucursal_id, pos_id, pagando * total, cliente_id, descr + detalle, usuario_id));
                             }
                             break;
-
                     }
 
                     return asiento;
@@ -439,59 +429,68 @@
                 }
 
 
-                function getMaxAsiento(callback) {
+                function getMaxAsiento() {
                     return $http.post(url,
                         {'function': 'getmaxasiento'})
-                        .success(function (data) {
-                            callback(data);
+                        .then(function (data) {
+                            return data;
                         })
-                        .error();
+                        .catch(function(data){
+                            ErrorHandler(data);
+                        });
                 }
 
 
-                function getBy(params, callback) {
+                function getBy(params) {
                     return $http.post(url,
                         {"function": "getby"})
-                        .success(callback)
-                        .error(function (data) {
-
+                        .then(function(data){
+                            return data;
+                        })
+                        .catch(function(data){
+                            ErrorHandler(data);
                         });
-
                 }
 
-                function get(callback) {
+                function get() {
                     //return $http.post('./api/login.php', { username: username, password: password });
                     return $http.post('./directives/cuentas/api/cuentas.php',
                         {"function": "get"},
                         {cache: true})
-                        .success(callback)
-                        .error(function (data) {
+                        .then(function(data){
+                            return data;
+                        })
+                        .catch(function (data) {
                             //console.log(data);
                             vm.error = data.Message;
                             vm.dataLoading = false;
+                            ErrorHandler(data);
                         });
                 }
 
-                function deleteAsiento(id, sucursal_id, callback) {
+                function deleteAsiento(id, sucursal_id) {
                     return $http.post(url,
                         {"function": "deleteAsiento", "id": id, "sucursal_id": sucursal_id})
-                        .success(function (data) {
-                            callback(data);
+                        .then(function (data) {
+                            return data;
                         })
-                        .error(error)
+                        .catch(function(data){
+                            ErrorHandler(data);
+                        });
                 }
 
 
-                function save(callback, params) {
+                function save(params) {
                     return $http.post(url,
                         {"function": "save", "params": JSON.stringify(params)},
                         {cache: true})
-                        .success(function (data) {
+                        .then(function (data) {
                             console.log(data);
-                            results(callback, data)
+                            //results(callback, data)
+                            return data;
                         })
-                        .error(function (data) {
-                            error(data)
+                        .catch(function(data){
+                            ErrorHandler(data);
                         });
                 }
 
