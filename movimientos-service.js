@@ -12,7 +12,7 @@
     var scripts = document.getElementsByTagName("script");
     var currentScriptPath = scripts[scripts.length - 1].src;
     if (currentScriptPath.length == 0) {
-        currentScriptPath = window.installPath + '/mv-angular-movimientos/includes/ac-movimientos.php';
+        currentScriptPath = window.installPath + '/mv-angular-movimientos/includes/mv-movimientos.php';
     }
 
     app.service('MovimientoStockFinal', [function () {
