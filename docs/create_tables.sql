@@ -18,3 +18,12 @@ CREATE TABLE detallesmovimientos (
   valor varchar(400) DEFAULT NULL,
   movimiento_id int(11) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+CREATE TABLE resultados (
+  resultado_id int(11) NOT NULL AUTO_INCREMENT,
+  anio int(11) DEFAULT NULL,
+  mes int(11) DEFAULT NULL,
+  cuenta_id VARCHAR(45) NOT NULL DEFAULT '',
+  total int(11) DEFAULT 0,
+  PRIMARY KEY (resultado_id),
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
