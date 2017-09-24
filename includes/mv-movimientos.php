@@ -57,7 +57,7 @@ class Movimientos extends Main
             0 precios,
             0 proveedores,
             0 stocks
-        FROM productos p;");
+        FROM productos p WHERE empresa_id = " . getEmpresa() .";");
 
         foreach ($results as $row) {
 
@@ -107,7 +107,7 @@ class Movimientos extends Main
     {
 
         $db = self::$instance->db;;
-        $results = $db->rawQuery("select max(asiento_id) asiento from movimientos");
+        $results = $db->rawQuery("select max(asiento_id) asiento from movimientos where empresa_id = " . getEmpresa() );
         if ($results[0]['asiento'] === null) {
             echo 0;
         } else {
@@ -137,7 +137,8 @@ class Movimientos extends Main
                 "importe" => $decoded->importe,
                 "usuario_id" => $decoded->usuario_id,
                 "sucursal_id" => $decoded->sucursal_id,
-                "pos_id" => $decoded->pos_id
+                "pos_id" => $decoded->pos_id,
+                "empresa_id" => getEmpresa()
             );
 
             $id = $db->insert("movimientos", $data);
